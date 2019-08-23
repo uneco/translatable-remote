@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read;
+    }
+
+    match /users/{userId} {
+      allow write: if request.auth.uid == userId
+                   && request.resource.data.size() == 2
+                   && request.resource.data.displayName is string
+                   && request.resource.data.displayName.size() > 0
+                   && request.resource.data.displayName.size() < 255
+                   && request.resource.data.photoURL is string
+                   && request.resource.data.photoURL.matches('https://avatars\\d+.githubusercontent.com/u/\\d+\\?.+')
+                   && request.resource.data.photoURL.size() < 255;
+    }
+
+    match /phrases/{phraseHash} {
+      function isNewTranslation () {
+        return resource == null;
+      }
+
+      function isTranslationTextChanged () {
+        return resource != null
+            && request.resource.data.translatedText is string
+            && request.resource.data.translatedText != resource.data.translatedText;
+      }
+
+      allow write: if request.auth.uid != null
+                   && phraseHash.size() == 40
+                   && isOwnedUserRef(request.resource.data.user)
+                   && request.resource.data.translatedAt is timestamp
+                   && request.resource.data.originalText is string
+                   && request.resource.data.originalText.size() > 0
+                   && request.resource.data.originalText.size() < 5000
+                   && request.resource.data.translatedText is string
+                   && request.resource.data.translatedText.size() > 0
+                   && request.resource.data.translatedText.size() < 5000
+                   && (isNewTranslation() || isTranslationTextChanged());
+    }
+  }
+
+  function isOwnedUserRef(ref) {
+    return path('/databases/(default)/documents/users/' + request.auth.uid) == ref;
+  }
+}

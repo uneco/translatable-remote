@@ -1,0 +1,37 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@firebase/testing": "^0.12.1",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.2",
+    "@typescript-eslint/eslint-plugin": "1.13.0",
+    "@typescript-eslint/eslint-plugin-tslint": "1.13.0",
+    "@typescript-eslint/parser": "1.13.0",
+    "@typescript-eslint/typescript-estree": "1.13.0",
+    "eslint": "^6.2.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-unicorn": "^10.0.0",
+    "eslint-plugin-wix-editor": "^3.0.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "preset": "ts-jest"
+  }
+}
