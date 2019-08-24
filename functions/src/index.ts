@@ -30,7 +30,7 @@ export const storePhraseChangeHistory = functions
     const authUser = await admin.auth().getUser(after.user.id)
     const githubData = authUser.providerData.find((d) => d.providerId === 'github.com')
 
-    await snapshot.after.ref.collection('history').doc(historyId).set({
+    const history = {
       ...after,
       diff: diffResult ? serializeDiff(diffResult) : null,
       user: {
@@ -38,7 +38,10 @@ export const storePhraseChangeHistory = functions
         githubId: githubData!.uid,
         ...(await after.user.get()).data() || {},
       },
-    }, { merge: true })
+    }
+
+    await snapshot.after.ref.collection('history').doc(historyId).set(history, { merge: true })
+    await admin.firestore().collection('histories').doc(historyId).set(history, { merge: true })
   })
 
 export const downloadPhrases = functions
@@ -49,7 +52,7 @@ export const downloadPhrases = functions
     const phrases = await Promise.all(phrasesSnapshot.docs.map(async (doc) => ({
       id: doc.id,
       ...doc.data(),
-      translators: (await doc.ref.collection('history').get()).docs.map((t) => t.data()),
+      translators: (await doc.ref.collection('histories').get()).docs.map((t) => t.data()),
     })))
     response.send({ phrases })
   })

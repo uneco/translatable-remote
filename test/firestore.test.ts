@@ -321,4 +321,18 @@ describe('Rules', () => {
       })
     })
   })
+  describe('histories', () => {
+    it('write fails', async () => {
+      const database = authedApp({ uid: 'abcd' })
+      const history = database.collection('histories').doc('1234')
+      await firebase.assertFails(history.set({
+        translatedText: 'こんにちは',
+      }))
+    })
+    it('read succeeds', async () => {
+      const database = authedApp({ uid: 'abcd' })
+      const history = database.collection('histories').doc('1234')
+      await firebase.assertSucceeds(history.get())
+    })
+  })
 })
