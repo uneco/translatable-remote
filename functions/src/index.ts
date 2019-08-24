@@ -52,7 +52,7 @@ export const downloadPhrases = functions
     const phrases = await Promise.all(phrasesSnapshot.docs.map(async (doc) => ({
       id: doc.id,
       ...doc.data(),
-      translators: (await doc.ref.collection('histories').get()).docs.map((t) => t.data()),
+      translators: (await doc.ref.collection('history').get()).docs.map((t) => t.data()),
     })))
     response.send({ phrases })
   })
